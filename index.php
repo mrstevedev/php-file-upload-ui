@@ -5,16 +5,24 @@ if(!empty($_FILES['uploaded_file'])) {
     $allowed = array('image/jpg', 'image/jpeg', 'image/png');
 
     //Check uploaded file type is in the above array (therefore valid)  
-    if(in_array($_FILES['uploaded_file']['type'], $allowed)){
+    if(in_array($_FILES['uploaded_file']['type'], $allowed)) {
 
-        if(move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $path)) {
-            $notification = '
-                <strong style="position: absolute; top: -7rem;color: cadetblue; font-weight: 900; border: dashed 1px;padding: 1rem 10.6rem;text-align: center;">
-                    <i class="hide far fa-check-circle"></i> 
-                    The file ' . basename($_FILES['uploaded_file']['name']) . ' has been uploaded successfully</strong>';
+        if ($_FILES['uploaded_file']['size'] < 1048576) {
+
+            if(move_uploaded_file($_FILES['uploaded_file']['tmp_name'], $path)) {
+                $notification = '<strong style="position: absolute; top: -7rem;color: cadetblue; font-weight: 900; border: dashed 1px;padding: 1rem 3.6rem;text-align: center;width:100%">
+                        <i class="hide far fa-check-circle"></i> 
+                        The file ' . basename($_FILES['uploaded_file']['name']) . ' has been uploaded successfully</strong>';
+            } else {
+                echo 'There was a problem uploading the file.';
+            }
         } else {
-            $error = 'There was an error uploading the file. Please try again.';
+            $error = '<strong style="position: absolute; top: -7rem;color: red  ; font-weight: 900; border: dashed 1px;padding: 1rem 3.6rem;text-align: center;width:100%">
+            <i class="far fa-times-circle"></i>
+            The file ' . basename($_FILES['uploaded_file']['name']) . ' has exceeded 1MB</strong>';
         }
+    } else {
+        $error = '<strong style="position: absolute; top: -7rem; color:red; font-weight: 900; border: dashed 1px;padding: 1rem 3.6rem; text-align: center; width: 100%;"><i class="far fa-times-circle"></i> filetype not allowed</strong>';
     }
 }
 ?>
@@ -54,9 +62,9 @@ if(!empty($_FILES['uploaded_file'])) {
             <div class="col-md-10 col-lg-6 col-xl-7 m-auto">
                 <div class="form-group">
                     <form enctype="multipart/form-data" action="<?=$_SERVER['PHP_SELF']; ?>"" method="post">
-                    <div class="row">
-                        <div class="col">
-                            <?php echo $notification; ?>
+                    <div>
+                        <div>
+                            <?php echo $notification.$error; ?>
                         </div>
                     </div>
                         <h5>Choose a Photo</h5>
